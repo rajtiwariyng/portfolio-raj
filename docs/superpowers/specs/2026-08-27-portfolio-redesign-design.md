@@ -8,7 +8,8 @@
 
 Evolve the existing static portfolio from a BootstrapMade template into a premium engineering portfolio. Preserve every piece of real content. Invent nothing.
 
-Positioning: Senior Backend Engineer / Technical Lead. Not a UI/UX designer.
+Positioning: Senior Backend Engineer. The Technical Lead title is
+company-specific and appears only in the Abhikant timeline entry. Not a UI/UX designer.
 
 ## 2. Constraints
 
