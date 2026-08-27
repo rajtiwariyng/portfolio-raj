@@ -24,6 +24,7 @@ const GROUPS = [
       ['CodeIgniter', 'Legacy platform maintenance and feature work.'],
       ['Node.js', 'Services, tooling and real-time workloads.'],
       ['Python', 'Automation, scripting and data-driven workflows.'],
+      ['REST APIs', 'Payment, logistics, messaging and ERP/CRM integration.'],
     ],
   },
   {
@@ -44,8 +45,6 @@ const GROUPS = [
       ['Vue.js', 'Interactive interfaces on Laravel-backed products.'],
       ['React', 'Component-driven application interfaces.'],
       ['Tailwind', 'Utility-first styling on modern builds.'],
-      ['HTML5', 'Semantic, accessible document structure.'],
-      ['CSS3', 'Layout, responsive systems and performance.'],
     ],
   },
   {
@@ -54,7 +53,18 @@ const GROUPS = [
     nodes: [
       ['MySQL', 'Primary relational store; schema design and query tuning.'],
       ['MongoDB', 'Document storage for flexible and high-volume data.'],
-      ['JSON', 'API payload design and data interchange.'],
+      ['Data Extraction', 'Large-scale processing pipelines for operational data.'],
+      ['Web Crawling', 'Automated collection feeding downstream systems.'],
+    ],
+  },
+  {
+    id: 'ai',
+    label: 'AI & Automation',
+    nodes: [
+      ['AI APIs', 'AI services integrated into real business workflows.'],
+      ['Chatbots', 'Conversational interfaces over existing product data.'],
+      ['Queues & Schedulers', 'Background work that runs without anyone touching it.'],
+      ['Workflow Automation', 'Removing repetitive manual process from operations.'],
     ],
   },
   {
@@ -64,6 +74,7 @@ const GROUPS = [
       ['AWS', 'EC2, S3, RDS and SES; provisioning and monitoring.'],
       ['Docker', 'Reproducible environments and deployment.'],
       ['Linux', 'Server setup, hardening and administration.'],
+      ['Nginx / Apache', 'Web server configuration, SSL and domain management.'],
       ['Git', 'Version control and branching workflow.'],
       ['CI / CD', 'Automated build, test and deployment pipelines.'],
     ],
