@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://raj-tiwari.vercel.app/sitemap.xml

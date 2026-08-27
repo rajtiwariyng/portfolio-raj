@@ -1,260 +1,97 @@
-(function() {
-  "use strict";
-
-  /**
-   * Apply .scrolled class to the body as the page is scrolled down
-   */
-  function toggleScrolled() {
-    const selectBody = document.querySelector('body');
-    const selectHeader = document.querySelector('#header');
-    if (!selectHeader.classList.contains('scroll-up-sticky') && !selectHeader.classList.contains('sticky-top') && !selectHeader.classList.contains('fixed-top')) return;
-    window.scrollY > 100 ? selectBody.classList.add('scrolled') : selectBody.classList.remove('scrolled');
-  }
-
-  document.addEventListener('scroll', toggleScrolled);
-  window.addEventListener('load', toggleScrolled);
-
-  /**
-   * Mobile nav toggle
-   */
-  const mobileNavToggleBtn = document.querySelector('.mobile-nav-toggle');
-
-  function mobileNavToogle() {
-    document.querySelector('body').classList.toggle('mobile-nav-active');
-    mobileNavToggleBtn.classList.toggle('bi-list');
-    mobileNavToggleBtn.classList.toggle('bi-x');
-  }
-  if (mobileNavToggleBtn) {
-    mobileNavToggleBtn.addEventListener('click', mobileNavToogle);
-  }
-
-  /**
-   * Hide mobile nav on same-page/hash links
-   */
-  document.querySelectorAll('#navmenu a').forEach(navmenu => {
-    navmenu.addEventListener('click', () => {
-      if (document.querySelector('.mobile-nav-active')) {
-        mobileNavToogle();
-      }
-    });
-
-  });
-
-  /**
-   * Toggle mobile nav dropdowns
-   */
-  document.querySelectorAll('.navmenu .toggle-dropdown').forEach(navmenu => {
-    navmenu.addEventListener('click', function(e) {
-      e.preventDefault();
-      this.parentNode.classList.toggle('active');
-      this.parentNode.nextElementSibling.classList.toggle('dropdown-active');
-      e.stopImmediatePropagation();
-    });
-  });
-
-  /**
-   * Preloader
-   */
-  const preloader = document.querySelector('#preloader');
-  if (preloader) {
-    window.addEventListener('load', () => {
-      preloader.remove();
-    });
-  }
-
-  /**
-   * Scroll top button
-   */
-  let scrollTop = document.querySelector('.scroll-top');
-
-  function toggleScrollTop() {
-    if (scrollTop) {
-      window.scrollY > 100 ? scrollTop.classList.add('active') : scrollTop.classList.remove('active');
-    }
-  }
-  scrollTop.addEventListener('click', (e) => {
-    e.preventDefault();
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  });
-
-  window.addEventListener('load', toggleScrollTop);
-  document.addEventListener('scroll', toggleScrollTop);
-
-   /**
-   * Easy on scroll event listener 
-   */
- /**
- * Easy selector helper function
+/**
+ * Entry point.
+ *
+ * Everything below is progressive enhancement: the page is complete and
+ * readable with this file blocked. Modules are imported only when the
+ * environment can actually use them.
  */
-const select = (el, all = false) => {
-  el = el.trim()
-  if (all) {
-    return [...document.querySelectorAll(el)]
-  } else {
-    return document.querySelector(el)
+import { initNav } from './modules/nav.js';
+import { initMotion } from './modules/motion.js';
+import { initCounters } from './modules/counters.js';
+import { initWork } from './modules/work.js';
+import { initBuildRows } from './modules/build.js';
+import { prefersReducedMotion, isDesktopPointer, supportsWebGL } from './modules/env.js';
+
+const reduced = prefersReducedMotion();
+
+/* Nav and work panels are structural, not decorative: always on. */
+initNav();
+initWork();
+initBuildRows();
+
+if (reduced) {
+  // Counters render their final value; nothing animates.
+  initCounters({ animate: false });
+  document.documentElement.dataset.motionReady = '1';
+  document.documentElement.classList.remove('js-motion');
+} else {
+  initMotion();
+  initCounters({ animate: true });
+}
+
+/* --- custom cursor: desktop fine pointers only ---------------------------- */
+if (!reduced && isDesktopPointer()) {
+  import('./modules/cursor.js')
+    .then((m) => m.initCursor())
+    .catch(() => {});
+}
+
+/* --- stack graph: canvas 2D, wide viewports only -------------------------- */
+if (!reduced && window.matchMedia('(min-width: 1001px)').matches) {
+  const stackEl = document.querySelector('[data-stack-canvas]');
+  if (stackEl) {
+    whenVisible(stackEl, () => {
+      import('./modules/stack-graph.js')
+        .then((m) => m.initStackGraph(stackEl))
+        .catch(() => {});
+    });
   }
 }
 
-const onscroll = (el, listener) => {
-  el.addEventListener('scroll', listener)
+/* --- WebGL scenes ---------------------------------------------------------
+   Gated on: reduced-motion, viewport width, and an actual WebGL context.
+   When any gate fails no context is ever created and the CSS/SVG fallback
+   already in the markup is what the visitor sees.                            */
+const wideEnough = window.matchMedia('(min-width: 901px)').matches;
+
+if (!reduced && wideEnough && supportsWebGL()) {
+  const heroEl = document.querySelector('[data-scene="hero"]');
+  if (heroEl) {
+    import('./scenes/hero-system.js')
+      .then((m) => m.initHeroSystem(heroEl))
+      .catch(() => {});
+  }
+
+  const contactEl = document.querySelector('[data-scene="contact"]');
+  if (contactEl) {
+    whenVisible(
+      contactEl,
+      () => {
+        import('./scenes/contact-field.js')
+          .then((m) => m.initContactField(contactEl))
+          .catch(() => {});
+      },
+      '300px'
+    );
+  }
 }
 
 /**
- * Navbar links active state on scroll
+ * Run `fn` once, the first time `el` comes near the viewport.
  */
-let navbarlinks = select('#navmenu .scrollto', true)
-
-const navbarlinksActive = () => {
-  let position = window.scrollY + 200
-  navbarlinks.forEach(navbarlink => {
-    if (!navbarlink.hash) return
-    let section = select(navbarlink.hash)
-    if (!section) return
-
-    if (
-      position >= section.offsetTop &&
-      position <= section.offsetTop + section.offsetHeight
-    ) {
-      navbarlink.classList.add('active')
-    } else {
-      navbarlink.classList.remove('active')
-    }
-  })
-}
-
-window.addEventListener('load', navbarlinksActive)
-onscroll(document, navbarlinksActive)
-
-/**
- * Scrolls to an element with header offset
- */
-const scrollto = (el) => {
-  let header = select('#header')
-  let offset = header.offsetHeight
-
-  if (!header.classList.contains('header-scrolled')) {
-    offset -= 16
+function whenVisible(el, fn, rootMargin = '150px') {
+  if (!('IntersectionObserver' in window)) {
+    fn();
+    return;
   }
-
-  let elementPos = select(el).offsetTop
-  window.scrollTo({
-    top: elementPos - offset,
-    behavior: 'smooth'
-  })
-}
-
-
-  /**
-   * Animation on scroll function and init
-   */
-  function aosInit() {
-    AOS.init({
-      duration: 600,
-      easing: 'ease-in-out',
-      once: true,
-      mirror: false
-    });
-  }
-  window.addEventListener('load', aosInit);
-
-  /**
-   * Init typed.js
-   */
-  const selectTyped = document.querySelector('.typed');
-  if (selectTyped) {
-    let typed_strings = selectTyped.getAttribute('data-typed-items');
-    typed_strings = typed_strings.split(',');
-    new Typed('.typed', {
-      strings: typed_strings,
-      loop: true,
-      typeSpeed: 100,
-      backSpeed: 50,
-      backDelay: 2000
-    });
-  }
-
-  /**
-   * Animate the skills items on reveal
-   */
-  let skillsAnimation = document.querySelectorAll('.skills-animation');
-  skillsAnimation.forEach((item) => {
-    new Waypoint({
-      element: item,
-      offset: '80%',
-      handler: function(direction) {
-        let progress = item.querySelectorAll('.progress .progress-bar');
-        progress.forEach(el => {
-          el.style.width = el.getAttribute('aria-valuenow') + '%';
-        });
+  const io = new IntersectionObserver(
+    (entries) => {
+      if (entries.some((e) => e.isIntersecting)) {
+        io.disconnect();
+        fn();
       }
-    });
-  });
-
-  /**
-   * Initiate Pure Counter
-   */
-  new PureCounter();
-
-  /**
-   * Init swiper sliders
-   */
-  function initSwiper() {
-    document.querySelectorAll(".init-swiper").forEach(function(swiperElement) {
-      let config = JSON.parse(
-        swiperElement.querySelector(".swiper-config").innerHTML.trim()
-      );
-
-      if (swiperElement.classList.contains("swiper-tab")) {
-        initSwiperWithCustomPagination(swiperElement, config);
-      } else {
-        new Swiper(swiperElement, config);
-      }
-    });
-  }
-
-  window.addEventListener("load", initSwiper);
-
-  /**
-   * Init isotope layout and filters
-   */
-  document.querySelectorAll('.isotope-layout').forEach(function(isotopeItem) {
-    let layout = isotopeItem.getAttribute('data-layout') ?? 'masonry';
-    let filter = isotopeItem.getAttribute('data-default-filter') ?? '*';
-    let sort = isotopeItem.getAttribute('data-sort') ?? 'original-order';
-
-    let initIsotope;
-    imagesLoaded(isotopeItem.querySelector('.isotope-container'), function() {
-      initIsotope = new Isotope(isotopeItem.querySelector('.isotope-container'), {
-        itemSelector: '.isotope-item',
-        layoutMode: layout,
-        filter: filter,
-        sortBy: sort
-      });
-    });
-
-    isotopeItem.querySelectorAll('.isotope-filters li').forEach(function(filters) {
-      filters.addEventListener('click', function() {
-        isotopeItem.querySelector('.isotope-filters .filter-active').classList.remove('filter-active');
-        this.classList.add('filter-active');
-        initIsotope.arrange({
-          filter: this.getAttribute('data-filter')
-        });
-        if (typeof aosInit === 'function') {
-          aosInit();
-        }
-      }, false);
-    });
-
-  });
-
-  /**
-   * Initiate glightbox
-   */
-  const glightbox = GLightbox({
-    selector: '.glightbox'
-  });
-
-})();
+    },
+    { rootMargin }
+  );
+  io.observe(el);
+}

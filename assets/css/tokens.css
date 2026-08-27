@@ -1,0 +1,117 @@
+/* ==========================================================================
+   Design tokens
+   Black + white + orange. Orange is an accent and never a background.
+   ========================================================================== */
+
+:root {
+  /* --- surface ---------------------------------------------------------- */
+  --ink: #080808;
+  --ink-800: #0e0e0e;
+  --ink-700: #151515;
+  --paper: #ffffff;
+  --paper-alt: #f4f4f2;
+
+  /* --- accent ------------------------------------------------------------
+     On --ink this is 6.4:1 and unrestricted.
+     On --paper it is 3.1:1: LARGE DISPLAY TYPE, RULES AND NUMERALS ONLY.
+     Never use --orange for body copy on a light surface.                    */
+  --orange: #ff5a1f;
+  --orange-soft: rgba(255, 90, 31, 0.14);
+  --orange-line: rgba(255, 90, 31, 0.34);
+  --orange-glow: rgba(255, 90, 31, 0.22);
+  --orange-ink: #d43e08; /* AA-safe orange for small text on light */
+
+  /* --- text ------------------------------------------------------------- */
+  --text-on-dark: #ffffff;
+  --muted-on-dark: #8a8a8a; /* 5.6:1 on --ink */
+  --faint-on-dark: #5c5c5c; /* decorative only */
+  --text-on-light: #080808;
+  --muted-on-light: #5a5a5a; /* 7.0:1 on --paper */
+
+  /* --- hairlines -------------------------------------------------------- */
+  --rule-dark: rgba(255, 255, 255, 0.09);
+  --rule-dark-strong: rgba(255, 255, 255, 0.16);
+  --rule-light: rgba(8, 8, 8, 0.11);
+  --rule-light-strong: rgba(8, 8, 8, 0.2);
+
+  /* --- contextual aliases, flipped per section by .is-light / .is-dark --- */
+  --bg: var(--ink);
+  --fg: var(--text-on-dark);
+  --muted: var(--muted-on-dark);
+  --rule: var(--rule-dark);
+  --rule-strong: var(--rule-dark-strong);
+  --accent-text: var(--orange);
+
+  /* --- type ------------------------------------------------------------- */
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --fs-display-xl: clamp(2.5rem, 5.4vw, 4.5rem);
+  --fs-display-l: clamp(2.15rem, 5vw, 4.25rem);
+  --fs-display-m: clamp(1.6rem, 3.4vw, 2.85rem);
+  --fs-display-s: clamp(1.3rem, 2.2vw, 1.75rem);
+  --fs-body-l: clamp(1.02rem, 1.15vw, 1.2rem);
+  --fs-body: 1rem;
+  --fs-small: 0.875rem;
+  --fs-mono: 0.75rem;
+  --fs-mono-s: 0.6875rem;
+
+  --lh-display: 0.95;
+  --lh-heading: 1.08;
+  --lh-body: 1.65;
+
+  --tr-display: -0.035em;
+  --tr-heading: -0.025em;
+  --tr-mono: 0.14em;
+
+  /* --- layout ----------------------------------------------------------- */
+  --maxw: 1440px;
+  --gutter: clamp(1.25rem, 4vw, 5rem);
+  --section-y: clamp(5rem, 11vh, 9.5rem);
+  --nav-h: 76px;
+  --nav-h-compact: 60px;
+
+  /* --- motion ----------------------------------------------------------- */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 0.25s;
+  --dur-base: 0.5s;
+  --dur-slow: 0.9s;
+
+  --z-canvas: 0;
+  --z-content: 2;
+  --z-nav: 60;
+  --z-cursor: 90;
+}
+
+/* Section-level surface switches. Setting these flips every contextual
+   token at once, so components never need light/dark variants. */
+.is-dark {
+  --bg: var(--ink);
+  --fg: var(--text-on-dark);
+  --muted: var(--muted-on-dark);
+  --rule: var(--rule-dark);
+  --rule-strong: var(--rule-dark-strong);
+  --accent-text: var(--orange);
+}
+
+.is-darker {
+  --bg: var(--ink-800);
+  --fg: var(--text-on-dark);
+  --muted: var(--muted-on-dark);
+  --rule: var(--rule-dark);
+  --rule-strong: var(--rule-dark-strong);
+  --accent-text: var(--orange);
+}
+
+.is-light {
+  --bg: var(--paper);
+  --fg: var(--text-on-light);
+  --muted: var(--muted-on-light);
+  --rule: var(--rule-light);
+  --rule-strong: var(--rule-light-strong);
+  /* small accent text on light must not use raw --orange */
+  --accent-text: var(--orange-ink);
+}

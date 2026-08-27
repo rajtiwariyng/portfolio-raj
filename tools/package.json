@@ -1,0 +1,9 @@
+{
+  "name": "raj-portfolio-tools",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Dev-only image optimisation. Not part of the deployed site.",
+  "type": "module",
+  "scripts": { "images": "node optimize-images.mjs" },
+  "dependencies": { "sharp": "^0.33.5" }
+}
