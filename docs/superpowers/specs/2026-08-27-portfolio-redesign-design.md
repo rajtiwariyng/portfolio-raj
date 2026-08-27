@@ -8,7 +8,7 @@
 
 Evolve the existing static portfolio from a BootstrapMade template into a premium engineering portfolio. Preserve every piece of real content. Invent nothing.
 
-Positioning: Senior Backend Engineer / Technical Team Lead. Not a UI/UX designer.
+Positioning: Senior Backend Engineer / Technical Lead. Not a UI/UX designer.
 
 ## 2. Constraints
 
