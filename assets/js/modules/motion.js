@@ -45,10 +45,16 @@ function heroEntrance(gsap) {
 
   tl.from(hero.querySelector('.texture-grid'), { opacity: 0, duration: 0.9 }, 0)
     .fromTo(
+      hero.querySelectorAll('[data-hero-status]'),
+      { opacity: 0, y: 10 },
+      { opacity: 1, y: 0, duration: 0.6 },
+      0.25
+    )
+    .fromTo(
       hero.querySelectorAll('[data-hero-eyebrow]'),
       { opacity: 0, y: 12 },
       { opacity: 1, y: 0, duration: 0.7 },
-      0.35
+      0.4
     )
     .to(
       hero.querySelectorAll('[data-reveal-lines] .line__inner'),

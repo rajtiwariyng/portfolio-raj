@@ -256,7 +256,83 @@
   grid-column: 1 / span 8;
 }
 
-.hero__eyebrow {
+/* --------------------------------------------------------------------------
+   Availability chip
+   Square, to match a design that uses no rounded corners anywhere except
+   dots and the focus ring.
+   -------------------------------------------------------------------------- */
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.55rem 0.9rem;
+  border: 1px solid var(--rule-strong);
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-s);
+  font-weight: 500;
+  letter-spacing: var(--tr-mono);
+  text-transform: uppercase;
+  color: var(--fg);
+  background: color-mix(in srgb, var(--orange) 7%, transparent);
+}
+
+.status__dot {
+  position: relative;
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--orange);
+}
+
+/* the ping reads as "live" without demanding attention */
+.status__dot::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid var(--orange);
+  animation: status-ping 2.8s var(--ease-out-quart) infinite;
+}
+
+@keyframes status-ping {
+  0% {
+    transform: scale(0.55);
+    opacity: 0.9;
+  }
+  70%,
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status__dot::after {
+    animation: none;
+    opacity: 0.5;
+  }
+}
+
+@media (max-width: 460px) {
+  /* let the four modes wrap rather than overflow the chip */
+  .status {
+    align-items: flex-start;
+    line-height: 1.7;
+  }
+  .status__dot {
+    margin-top: 0.5em;
+  }
+}
+
+/* Status and role share one metadata row; it saves the vertical space the
+   chip would otherwise cost and wraps cleanly when the line runs out. */
+.hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.9rem 1.35rem;
   margin-bottom: clamp(1.5rem, 3vh, 2.25rem);
 }
 
@@ -1152,6 +1228,10 @@
 .contact__title {
   max-width: 18ch;
   margin-block: 1.75rem 2.5rem;
+}
+
+.contact__status {
+  margin-bottom: 2.25rem;
 }
 
 .contact__email {
